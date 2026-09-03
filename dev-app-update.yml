@@ -1,0 +1,3 @@
+provider: generic
+url: http://app.desert-chat.ru/static/desktop-app
+updaterCacheDirName: desert-desktop-updater
