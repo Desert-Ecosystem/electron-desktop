@@ -1,28 +1,22 @@
-import { app, BrowserWindow, dialog } from 'electron'
+import { app, BrowserWindow } from 'electron'
 import { autoUpdater } from 'electron-updater'
+import { showUpdateDialog } from './updateDialog'
 
 let isUpdateDialogVisible = false
 let notifiedVersion: string | null = null
 let isChecking = false
 let checkInterval: NodeJS.Timeout | null = null
 
-async function showUpdateReadyDialog(mainWindow?: BrowserWindow | null): Promise<void> {
+async function showUpdateReadyDialog(
+  mainWindow: BrowserWindow | null | undefined,
+  version: string
+): Promise<void> {
   if (isUpdateDialogVisible) return
   isUpdateDialogVisible = true
   try {
-    const options = {
-      type: 'info' as const,
-      title: 'Обновление готово',
-      message: 'Новая версия Desert загружена. Перезапустить сейчас?',
-      buttons: ['Перезапустить', 'Позже'],
-      defaultId: 0
-    }
-    const { response } =
-      mainWindow && !mainWindow.isDestroyed()
-        ? await dialog.showMessageBox(mainWindow, options)
-        : await dialog.showMessageBox(options)
-    if (response === 0) autoUpdater.quitAndInstall()
-    // При «Позже» ничего не сбрасываем: notifiedVersion уже зафиксирован,
+    const decision = await showUpdateDialog(mainWindow, version)
+    if (decision === 'restart') autoUpdater.quitAndInstall()
+    // При «later» / закрытии крестиком ничего не сбрасываем: notifiedVersion уже зафиксирован,
     // поэтому диалог по этой версии больше не покажется.
     // Обновление тихо встанет при выходе (autoInstallOnAppQuit).
   } finally {
@@ -41,7 +35,7 @@ export function setupUpdater(mainWindow?: BrowserWindow | null): void {
     // показываем диалог только один раз на версию и только если нет открытого диалога.
     if (notifiedVersion === info.version) return
     notifiedVersion = info.version
-    void showUpdateReadyDialog(mainWindow)
+    void showUpdateReadyDialog(mainWindow, info.version)
   })
   autoUpdater.checkForUpdatesAndNotify().catch((e) => console.error('Update check failed:', e))
   checkInterval = setInterval(() => {

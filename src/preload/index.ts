@@ -6,6 +6,11 @@ const api = {
   selectSource: (sourceId: string, includeAudio: boolean): Promise<unknown> =>
     ipcRenderer.invoke('select-source', sourceId, includeAudio),
   cancelPicker: (): Promise<void> => ipcRenderer.invoke('cancel-picker'),
+  getUpdateInfo: (): Promise<{ version: string }> => ipcRenderer.invoke('get-update-info'),
+  confirmUpdateRestart: (): Promise<void> => ipcRenderer.invoke('update-restart'),
+  dismissUpdate: (): Promise<void> => ipcRenderer.invoke('update-later'),
+  debugShowUpdate: (version?: string): Promise<string> =>
+    ipcRenderer.invoke('debug-show-update', version),
   system: {
     showNotification: (title: string, body: string): Promise<void> =>
       ipcRenderer.invoke('show-notification', { title, body }),

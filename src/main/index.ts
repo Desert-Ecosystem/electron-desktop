@@ -7,6 +7,7 @@ import { SiteCache } from './siteCache'
 import { setupRequestInterceptor } from './requestInterceptor'
 import { createSplashWindow, updateSplashProgress, closeSplashWindow } from './splash'
 import { setupNotificationsHandler } from './handlers/notifications'
+import { setupUpdateDialogHandlers } from './updateDialog'
 import { setupUpdater } from './updater'
 
 let mainWindow: BrowserWindow | null = null
@@ -61,6 +62,7 @@ app.whenReady().then(async () => {
 
   setupNotificationsHandler()
   setupPickerHandlers()
+  setupUpdateDialogHandlers()
 
   session.defaultSession.setDisplayMediaRequestHandler((_request, callback) => {
     setDisplayMediaCallback(callback)
