@@ -1,6 +1,6 @@
 {
   "name": "desert-desktop",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Safe & Functional Messenger",
   "license": "GPL-3.0-only",
   "main": "./out/main/index.js",
